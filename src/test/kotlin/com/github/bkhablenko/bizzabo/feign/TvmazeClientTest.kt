@@ -27,14 +27,14 @@ class TvmazeClientTest : AbstractFeignClientTest() {
 
         @Test
         fun `should return expected TV shows`() {
-            val expected = TvmazeShow(
+            val expectedShow = TvmazeShow(
                 id = 82,
                 name = "Game of Thrones",
                 image = TvmazeImage(
                     original = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"),
                 ),
             )
-            assertThat(tvmazeClient.getShowByImdb(GAME_OF_THRONES_IMDB), equalTo(expected))
+            assertThat(tvmazeClient.getShowByImdb(GAME_OF_THRONES_IMDB), equalTo(expectedShow))
         }
 
         @Test
