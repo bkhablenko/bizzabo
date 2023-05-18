@@ -79,7 +79,7 @@ class CacheableTvmazeIntegrationTest {
 
         @Test
         fun `should return TV shows with their cast`() {
-            val expected = Show(
+            val expectedShow = Show(
                 id = 82,
                 title = "Game of Thrones",
                 imageUrl = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"),
@@ -91,7 +91,7 @@ class CacheableTvmazeIntegrationTest {
                     ),
                 ),
             )
-            assertThat(tvmazeIntegration.getShowByImdb(GAME_OF_THRONES_IMDB), equalTo(expected))
+            assertThat(tvmazeIntegration.getShowByImdb(GAME_OF_THRONES_IMDB), equalTo(expectedShow))
         }
 
         @Test

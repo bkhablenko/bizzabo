@@ -37,7 +37,6 @@ class TvmazeClientTest : AbstractFeignClientTest() {
             assertThat(tvmazeClient.getShowByImdb(GAME_OF_THRONES_IMDB), equalTo(expectedShow))
         }
 
-        @Test
         fun `should return null if nothing found`() {
             val nonExistentImdb = "tt0000000"
             assertThat(tvmazeClient.getShowByImdb(nonExistentImdb), nullValue())

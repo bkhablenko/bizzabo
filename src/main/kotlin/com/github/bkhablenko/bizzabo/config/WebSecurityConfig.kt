@@ -9,10 +9,11 @@ import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableMethodSecurity
-class WebSecurityConfig {
+class WebSecurityConfig : WebMvcConfigurer {
 
     companion object {
 
