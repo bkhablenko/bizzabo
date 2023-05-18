@@ -18,13 +18,18 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2022.0.2"))
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.uuid:java-uuid-generator:4.1.0")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
     implementation("net.logstash.logback:logstash-logback-encoder:7.3")
     implementation("org.flywaydb:flyway-core")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
