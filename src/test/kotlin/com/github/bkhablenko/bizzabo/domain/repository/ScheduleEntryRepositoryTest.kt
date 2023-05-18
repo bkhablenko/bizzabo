@@ -23,17 +23,17 @@ class ScheduleEntryRepositoryTest : AbstractDataJpaTest() {
             val username = "John.Smith"
             with(entityManager) {
                 // Someone else's record
-                persist(ScheduleEntry(username = "mculkin1980", imdb = "tt0000010"))
+                persist(ScheduleEntry(username = "mculkin1980", showId = 10))
 
-                persist(ScheduleEntry(username = username, imdb = "tt0000001"))
-                persist(ScheduleEntry(username = username, imdb = "tt0000002"))
-                persist(ScheduleEntry(username = username, imdb = "tt0000003"))
+                persist(ScheduleEntry(username = username, showId = 1))
+                persist(ScheduleEntry(username = username, showId = 2))
+                persist(ScheduleEntry(username = username, showId = 3))
 
                 flushAndClear()
             }
 
             val result = scheduleEntryRepository.findByUsername(username)
-            assertThat(result.map { it.imdb }, containsInAnyOrder("tt0000001", "tt0000002", "tt0000003"))
+            assertThat(result.map { it.showId }, containsInAnyOrder(1, 2, 3))
         }
     }
 }

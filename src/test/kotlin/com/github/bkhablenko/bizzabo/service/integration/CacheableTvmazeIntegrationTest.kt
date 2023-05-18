@@ -32,7 +32,7 @@ import java.net.URL
 class CacheableTvmazeIntegrationTest {
 
     companion object {
-        private const val GAME_OF_THRONES_IMDB = "tt0944947"
+        private const val GAME_OF_THRONES_SHOW_ID = 82
     }
 
     @Autowired
@@ -46,16 +46,14 @@ class CacheableTvmazeIntegrationTest {
 
     @BeforeEach
     fun setUp() {
-        val tvmazeShowId = 82
-
-        whenever(tvmazeClient.getShowByImdb(GAME_OF_THRONES_IMDB)) doReturn TvmazeShow(
-            id = tvmazeShowId,
+        whenever(tvmazeClient.getShowById(GAME_OF_THRONES_SHOW_ID)) doReturn TvmazeShow(
+            id = GAME_OF_THRONES_SHOW_ID,
             name = "Game of Thrones",
             image = TvmazeImage(
                 original = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"),
             ),
         )
-        whenever(tvmazeClient.getShowCastById(tvmazeShowId)) doReturn listOf(
+        whenever(tvmazeClient.getCastByShowId(GAME_OF_THRONES_SHOW_ID)) doReturn listOf(
             TvmazeCastMember(
                 person = TvmazeCastMember.Person(
                     id = 14075,
@@ -73,14 +71,14 @@ class CacheableTvmazeIntegrationTest {
         invalidateCaches()
     }
 
-    @DisplayName("getShowByImdb")
+    @DisplayName("getShowById")
     @Nested
-    inner class GetShowByImdbTest {
+    inner class GetShowByIdTest {
 
         @Test
         fun `should return TV shows with their cast`() {
             val expectedShow = Show(
-                id = 82,
+                id = GAME_OF_THRONES_SHOW_ID,
                 title = "Game of Thrones",
                 imageUrl = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"),
                 cast = listOf(
@@ -91,15 +89,15 @@ class CacheableTvmazeIntegrationTest {
                     ),
                 ),
             )
-            assertThat(tvmazeIntegration.getShowByImdb(GAME_OF_THRONES_IMDB), equalTo(expectedShow))
+            assertThat(tvmazeIntegration.getShowById(GAME_OF_THRONES_SHOW_ID), equalTo(expectedShow))
         }
 
         @Test
         fun `should cache returned values`() {
             repeat(5) {
-                tvmazeIntegration.getShowByImdb(GAME_OF_THRONES_IMDB)
+                tvmazeIntegration.getShowById(GAME_OF_THRONES_SHOW_ID)
             }
-            verify(tvmazeClient, times(1)).getShowByImdb(GAME_OF_THRONES_IMDB)
+            verify(tvmazeClient, times(1)).getShowById(GAME_OF_THRONES_SHOW_ID)
         }
     }
 

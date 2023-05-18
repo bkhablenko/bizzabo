@@ -19,16 +19,16 @@ class TvmazeScheduleService(
         scheduleEntryRepository
             .findByUsername(username)
             .map {
-                tvmazeIntegration.getShowByImdb(it.imdb)
+                tvmazeIntegration.getShowById(it.showId)
             }
 
-    override fun saveScheduleEntry(username: String, imdb: String) {
-        val entity = ScheduleEntry(username, imdb)
+    override fun saveScheduleEntry(username: String, showId: Int) {
+        val entity = ScheduleEntry(username, showId)
         scheduleEntryRepository.save(entity)
     }
 
-    override fun deleteScheduleEntry(username: String, imdb: String) {
-        val entityId = ScheduleEntryId(username, imdb)
+    override fun deleteScheduleEntry(username: String, showId: Int) {
+        val entityId = ScheduleEntryId(username, showId)
         scheduleEntryRepository.deleteById(entityId)
     }
 }

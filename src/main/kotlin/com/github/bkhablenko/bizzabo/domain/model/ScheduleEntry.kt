@@ -7,12 +7,12 @@ import jakarta.persistence.Table
 
 @Entity
 @IdClass(ScheduleEntryId::class)
-@Table(name = "schedule")
+@Table(name = "schedule_entry")
 class ScheduleEntry(
 
     @Id
     var username: String,
 
     @Id
-    var imdb: String,
+    var showId: Int,
 )

@@ -6,7 +6,7 @@ interface ScheduleService {
 
     fun getSchedule(username: String): List<Show>
 
-    fun saveScheduleEntry(username: String, imdb: String)
+    fun saveScheduleEntry(username: String, showId: Int)
 
-    fun deleteScheduleEntry(username: String, imdb: String)
+    fun deleteScheduleEntry(username: String, showId: Int)
 }

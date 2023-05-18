@@ -25,8 +25,8 @@ import java.net.URL
 class ScheduleControllerTest {
 
     companion object {
-        private const val GAME_OF_THRONES_IMDB = "tt0944947"
-        private const val USERNAME = "John.Smith"
+        private const val GAME_OF_THRONES_SHOW_ID = 82
+        private const val TEST_USERNAME = "John.Smith"
     }
 
     @Autowired
@@ -40,10 +40,10 @@ class ScheduleControllerTest {
     inner class GetScheduleTest {
 
         @Test
-        @WithMockUser(username = USERNAME)
+        @WithMockUser(username = TEST_USERNAME)
         fun `should respond with 200 OK on success`() {
             val expectedShow = Show(
-                id = 82,
+                id = GAME_OF_THRONES_SHOW_ID,
                 title = "Game of Thrones",
                 imageUrl = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"),
                 cast = listOf(
@@ -54,7 +54,7 @@ class ScheduleControllerTest {
                     ),
                 ),
             )
-            whenever(scheduleService.getSchedule(USERNAME)) doReturn listOf(expectedShow)
+            whenever(scheduleService.getSchedule(TEST_USERNAME)) doReturn listOf(expectedShow)
 
             getSchedule().andExpect {
                 status { isOk() }
@@ -98,9 +98,9 @@ class ScheduleControllerTest {
     inner class SaveScheduleEntryTest {
 
         @Test
-        @WithMockUser(username = USERNAME)
+        @WithMockUser(username = TEST_USERNAME)
         fun `should respond with 204 No Content on success`() {
-            saveScheduleEntry(GAME_OF_THRONES_IMDB).andExpect {
+            saveScheduleEntry(GAME_OF_THRONES_SHOW_ID).andExpect {
                 status { isNoContent() }
                 content {
                     bytes(ByteArray(0))
@@ -109,16 +109,8 @@ class ScheduleControllerTest {
         }
 
         @Test
-        @WithMockUser(username = USERNAME)
-        fun `should respond with 400 Bad Request on invalid payload`() {
-            saveScheduleEntry("42").andExpect {
-                status { isBadRequest() }
-            }
-        }
-
-        @Test
         fun `should respond with 401 Unauthorized on missing Authorization header`() {
-            saveScheduleEntry(GAME_OF_THRONES_IMDB).andExpect {
+            saveScheduleEntry(GAME_OF_THRONES_SHOW_ID).andExpect {
                 status { isUnauthorized() }
                 content {
                     bytes(ByteArray(0))
@@ -126,23 +118,23 @@ class ScheduleControllerTest {
             }
         }
 
-        private fun saveScheduleEntry(imdb: String) =
+        private fun saveScheduleEntry(showId: Int) =
             mockMvc
                 .post("/api/v1/user/schedule/shows") {
                     contentType = MediaType.APPLICATION_JSON
-                    content = """{"imdb":"$imdb"}"""
+                    content = """{"show_id":$showId}"""
                 }
                 .andDo { print() }
     }
 
-    @DisplayName("DELETE /api/v1/user/schedule/shows/{imdb}")
+    @DisplayName("DELETE /api/v1/user/schedule/shows/{showId}")
     @Nested
     inner class DeleteScheduleEntryTest {
 
         @Test
-        @WithMockUser(username = USERNAME)
+        @WithMockUser(username = TEST_USERNAME)
         fun `should respond with 204 No Content on success`() {
-            deleteScheduleEntry(GAME_OF_THRONES_IMDB).andExpect {
+            deleteScheduleEntry(GAME_OF_THRONES_SHOW_ID).andExpect {
                 status { isNoContent() }
                 content {
                     bytes(ByteArray(0))
@@ -151,16 +143,8 @@ class ScheduleControllerTest {
         }
 
         @Test
-        @WithMockUser(username = USERNAME)
-        fun `should respond with 400 Bad Request on invalid path variable`() {
-            deleteScheduleEntry("42").andExpect {
-                status { isBadRequest() }
-            }
-        }
-
-        @Test
         fun `should respond with 401 Unauthorized on missing Authorization header`() {
-            deleteScheduleEntry(GAME_OF_THRONES_IMDB).andExpect {
+            deleteScheduleEntry(GAME_OF_THRONES_SHOW_ID).andExpect {
                 status { isUnauthorized() }
                 content {
                     bytes(ByteArray(0))
@@ -168,9 +152,9 @@ class ScheduleControllerTest {
             }
         }
 
-        private fun deleteScheduleEntry(imdb: String) =
+        private fun deleteScheduleEntry(showId: Int) =
             mockMvc
-                .delete("/api/v1/user/schedule/shows/$imdb")
+                .delete("/api/v1/user/schedule/shows/$showId")
                 .andDo { print() }
     }
 }

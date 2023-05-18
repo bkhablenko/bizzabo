@@ -21,8 +21,8 @@ import java.net.URL
 class TvmazeScheduleServiceTest {
 
     companion object {
-        private const val GAME_OF_THRONES_IMDB = "tt0944947"
-        private const val USERNAME = "John.Smith"
+        private const val GAME_OF_THRONES_SHOW_ID = 82
+        private const val TEST_USERNAME = "John.Smith"
     }
 
     private val scheduleEntryRepository = mock<ScheduleEntryRepository>()
@@ -37,18 +37,18 @@ class TvmazeScheduleServiceTest {
 
         @Test
         fun `should return expected TV shows`() {
-            val scheduleEntries = listOf(ScheduleEntry(USERNAME, GAME_OF_THRONES_IMDB))
-            whenever(scheduleEntryRepository.findByUsername(USERNAME)) doReturn scheduleEntries
+            val scheduleEntries = listOf(ScheduleEntry(TEST_USERNAME, GAME_OF_THRONES_SHOW_ID))
+            whenever(scheduleEntryRepository.findByUsername(TEST_USERNAME)) doReturn scheduleEntries
 
             val expectedShow = Show(
-                id = 82,
+                id = GAME_OF_THRONES_SHOW_ID,
                 title = "Game of Thrones",
                 imageUrl = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"),
                 cast = emptyList(),
             )
-            whenever(tvmazeIntegration.getShowByImdb(GAME_OF_THRONES_IMDB)) doReturn expectedShow
+            whenever(tvmazeIntegration.getShowById(GAME_OF_THRONES_SHOW_ID)) doReturn expectedShow
 
-            val result = tvmazeScheduleService.getSchedule(USERNAME)
+            val result = tvmazeScheduleService.getSchedule(TEST_USERNAME)
             assertThat(result, contains(expectedShow))
         }
     }
@@ -59,10 +59,10 @@ class TvmazeScheduleServiceTest {
 
         @Test
         fun `should save expected entity`() {
-            tvmazeScheduleService.saveScheduleEntry(USERNAME, GAME_OF_THRONES_IMDB)
+            tvmazeScheduleService.saveScheduleEntry(TEST_USERNAME, GAME_OF_THRONES_SHOW_ID)
 
             verify(scheduleEntryRepository).save(argThat {
-                username == USERNAME && imdb == GAME_OF_THRONES_IMDB
+                username == TEST_USERNAME && showId == GAME_OF_THRONES_SHOW_ID
             })
         }
     }
@@ -73,9 +73,9 @@ class TvmazeScheduleServiceTest {
 
         @Test
         fun `should delete expected entity by ID`() {
-            tvmazeScheduleService.deleteScheduleEntry(USERNAME, GAME_OF_THRONES_IMDB)
+            tvmazeScheduleService.deleteScheduleEntry(TEST_USERNAME, GAME_OF_THRONES_SHOW_ID)
 
-            val expectedEntityId = ScheduleEntryId(USERNAME, GAME_OF_THRONES_IMDB)
+            val expectedEntityId = ScheduleEntryId(TEST_USERNAME, GAME_OF_THRONES_SHOW_ID)
             verify(scheduleEntryRepository).deleteById(expectedEntityId)
         }
     }

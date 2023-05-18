@@ -24,7 +24,7 @@ spring:
     name: bizzabo
 
   cache:
-    cache-names: tvmazeShowsByImdb
+    cache-names: tvmazeShowsById
     caffeine:
       spec: maximumSize=1000,expireAfterWrite=5m
 
