@@ -1,20 +1,27 @@
 package com.github.bkhablenko.bizzabo.service.integration
 
 import com.github.bkhablenko.bizzabo.config.CacheConfig
+import com.github.bkhablenko.bizzabo.exception.ShowNotFoundException
 import com.github.bkhablenko.bizzabo.feign.TvmazeClient
 import com.github.bkhablenko.bizzabo.feign.model.TvmazeCastMember
 import com.github.bkhablenko.bizzabo.feign.model.TvmazeImage
 import com.github.bkhablenko.bizzabo.feign.model.TvmazeShow
+import com.github.bkhablenko.bizzabo.feign.model.TvmazeShowEpisode
 import com.github.bkhablenko.bizzabo.service.model.CastMember
 import com.github.bkhablenko.bizzabo.service.model.Show
+import com.github.bkhablenko.bizzabo.service.model.ShowEpisode
+import feign.FeignException
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -25,6 +32,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.cache.CacheManager
 import java.net.URL
+import java.time.LocalDate
+import java.time.Month
 
 @DisplayName("CacheableTvmazeIntegration")
 @SpringBootTest(classes = [CacheableTvmazeIntegration::class, CacheConfig::class])
@@ -64,6 +73,16 @@ class CacheableTvmazeIntegrationTest {
                 ),
             ),
         )
+        whenever(tvmazeClient.getEpisodesByShowId(GAME_OF_THRONES_SHOW_ID)) doReturn listOf(
+            TvmazeShowEpisode(
+                id = 4952,
+                name = "Winter is Coming",
+                season = 1,
+                number = 1,
+                airdate = LocalDate.of(2011, Month.APRIL, 17)
+
+            )
+        )
     }
 
     @AfterEach
@@ -77,7 +96,7 @@ class CacheableTvmazeIntegrationTest {
 
         @Test
         fun `should return TV shows with their cast`() {
-            val expectedShow = Show(
+            val expectedValue = Show(
                 id = GAME_OF_THRONES_SHOW_ID,
                 title = "Game of Thrones",
                 imageUrl = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"),
@@ -89,7 +108,18 @@ class CacheableTvmazeIntegrationTest {
                     ),
                 ),
             )
-            assertThat(tvmazeIntegration.getShowById(GAME_OF_THRONES_SHOW_ID), equalTo(expectedShow))
+            val result = tvmazeIntegration.getShowById(GAME_OF_THRONES_SHOW_ID)
+            assertThat(result, equalTo(expectedValue))
+        }
+
+        @Test
+        fun `should throw exception if not found`() {
+            doThrow(FeignException.NotFound::class)
+                .whenever(tvmazeClient).getShowById(GAME_OF_THRONES_SHOW_ID)
+
+            assertThrows<ShowNotFoundException> {
+                tvmazeIntegration.getShowById(GAME_OF_THRONES_SHOW_ID)
+            }
         }
 
         @Test
@@ -98,6 +128,42 @@ class CacheableTvmazeIntegrationTest {
                 tvmazeIntegration.getShowById(GAME_OF_THRONES_SHOW_ID)
             }
             verify(tvmazeClient, times(1)).getShowById(GAME_OF_THRONES_SHOW_ID)
+        }
+    }
+
+    @DisplayName("getEpisodesByShowId")
+    @Nested
+    inner class GetEpisodesByShowIdTest {
+
+        @Test
+        fun `should return TV show episodes`() {
+            val expectedValue = ShowEpisode(
+                id = 4952,
+                title = "Winter is Coming",
+                season = 1,
+                number = 1,
+                airDate = LocalDate.of(2011, Month.APRIL, 17),
+            )
+            val result = tvmazeIntegration.getEpisodesByShowId(GAME_OF_THRONES_SHOW_ID)
+            assertThat(result, contains(expectedValue))
+        }
+
+        @Test
+        fun `should throw exception if not found`() {
+            doThrow(FeignException.NotFound::class)
+                .whenever(tvmazeClient).getEpisodesByShowId(GAME_OF_THRONES_SHOW_ID)
+
+            assertThrows<ShowNotFoundException> {
+                tvmazeIntegration.getEpisodesByShowId(GAME_OF_THRONES_SHOW_ID)
+            }
+        }
+
+        @Test
+        fun `should cache returned values`() {
+            repeat(5) {
+                tvmazeIntegration.getEpisodesByShowId(GAME_OF_THRONES_SHOW_ID)
+            }
+            verify(tvmazeClient, times(1)).getEpisodesByShowId(GAME_OF_THRONES_SHOW_ID)
         }
     }
 
