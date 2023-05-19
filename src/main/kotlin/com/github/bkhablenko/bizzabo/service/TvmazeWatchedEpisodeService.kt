@@ -17,7 +17,7 @@ class TvmazeWatchedEpisodeService(
 ) : WatchedEpisodeService {
 
     override fun associateWithFirstUnwatchedEpisode(username: String, schedule: List<Show>): Map<Show, ShowEpisode> {
-        val watchedEpisodes = getWatchedEpisodes(username)
+        val watchedEpisodes = getWatchedEpisodeIdSet(username)
 
         return schedule.associateWith { show ->
             tvmazeIntegration
@@ -36,7 +36,7 @@ class TvmazeWatchedEpisodeService(
         watchedEpisodeRepository.deleteById(entityId)
     }
 
-    private fun getWatchedEpisodes(username: String): Set<Int> =
+    private fun getWatchedEpisodeIdSet(username: String): Set<Int> =
         watchedEpisodeRepository
             .findByUsername(username)
             .map { it.episodeId }

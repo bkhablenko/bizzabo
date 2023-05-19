@@ -83,8 +83,7 @@ class TvmazeClientTest : AbstractFeignClientTest() {
                 name = "Winter is Coming",
                 season = 1,
                 number = 1,
-                airdate = LocalDate.of(2011, Month.APRIL, 17)
-
+                airdate = LocalDate.of(2011, Month.APRIL, 17),
             )
             assertThat(result, hasItem(expectedFirstEpisode))
         }

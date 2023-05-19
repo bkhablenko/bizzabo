@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class TvmazeShow(
 
-    @JsonProperty("id")
     val id: Int,
 
-    @JsonProperty("name")
     val name: String,
 
-    @JsonProperty("image")
     val image: TvmazeImage,
 
     @JsonProperty("_embedded")
@@ -19,7 +16,6 @@ data class TvmazeShow(
 
     data class Embedded(
 
-        @JsonProperty("cast")
         val cast: List<TvmazeCastMember>,
     )
 }
