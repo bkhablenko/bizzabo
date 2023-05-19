@@ -46,12 +46,9 @@ class ScheduleController(
     @GetMapping("/watch-next")
     fun getWatchNextList(@AuthenticationPrincipal user: User): List<WatchNextItem> {
         val username = user.username
-
-        val schedule = scheduleService.getSchedule(username)
-        return watchedEpisodeService
-            .associateWithFirstUnwatchedEpisode(username, schedule)
-            .map { (show, episode) ->
-                WatchNextItem(show, episode)
-            }
+        return watchedEpisodeService.getWatchNextList(
+            username = username,
+            schedule = scheduleService.getSchedule(username),
+        )
     }
 }

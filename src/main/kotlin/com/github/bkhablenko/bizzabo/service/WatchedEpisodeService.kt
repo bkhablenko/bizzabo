@@ -1,11 +1,14 @@
 package com.github.bkhablenko.bizzabo.service
 
 import com.github.bkhablenko.bizzabo.service.model.Show
-import com.github.bkhablenko.bizzabo.service.model.ShowEpisode
+import com.github.bkhablenko.bizzabo.service.model.WatchNextItem
 
 interface WatchedEpisodeService {
 
-    fun associateWithFirstUnwatchedEpisode(username: String, schedule: List<Show>): Map<Show, ShowEpisode>
+    /**
+     * Get the next unwatched episode for each show on the TV schedule.
+     */
+    fun getWatchNextList(username: String, schedule: List<Show>): List<WatchNextItem>
 
     fun saveWatchedEpisode(username: String, episodeId: Int)
 

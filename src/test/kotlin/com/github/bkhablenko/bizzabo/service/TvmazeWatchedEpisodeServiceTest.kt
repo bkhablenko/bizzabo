@@ -6,9 +6,10 @@ import com.github.bkhablenko.bizzabo.domain.repository.WatchedEpisodeRepository
 import com.github.bkhablenko.bizzabo.service.integration.TvmazeIntegration
 import com.github.bkhablenko.bizzabo.service.model.Show
 import com.github.bkhablenko.bizzabo.service.model.ShowEpisode
+import com.github.bkhablenko.bizzabo.service.model.WatchNextItem
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.aMapWithSize
-import org.hamcrest.Matchers.hasEntry
+import org.hamcrest.Matchers.hasItem
+import org.hamcrest.Matchers.iterableWithSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -37,12 +38,12 @@ class TvmazeWatchedEpisodeServiceTest {
 
     private val tvmazeWatchedEpisodeService = TvmazeWatchedEpisodeService(watchedEpisodeRepository, tvmazeIntegration)
 
-    @DisplayName("associateWithFirstUnwatchedEpisode")
+    @DisplayName("getWatchNextList")
     @Nested
-    inner class AssociateWithFirstUnwatchedEpisodeTest {
+    inner class GetWatchNextListTest {
 
         @Test
-        fun `should do something useful`() {
+        fun `should return the next unwatched episode for each TV show on the schedule`() {
             val show = Show(
                 id = GAME_OF_THRONES_SHOW_ID,
                 title = "Game of Thrones",
@@ -71,9 +72,9 @@ class TvmazeWatchedEpisodeServiceTest {
 
             whenever(tvmazeIntegration.getEpisodesByShowId(GAME_OF_THRONES_SHOW_ID)) doReturn episodes
 
-            val result = tvmazeWatchedEpisodeService.associateWithFirstUnwatchedEpisode(TEST_USERNAME, listOf(show))
-            assertThat(result, aMapWithSize(1))
-            assertThat(result, hasEntry(show, episodes[1]))
+            val result = tvmazeWatchedEpisodeService.getWatchNextList(TEST_USERNAME, listOf(show))
+            assertThat(result, iterableWithSize(1))
+            assertThat(result, hasItem(WatchNextItem(show, episodes[1])))
         }
     }
 

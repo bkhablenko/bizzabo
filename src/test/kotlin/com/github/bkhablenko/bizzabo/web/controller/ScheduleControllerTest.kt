@@ -5,6 +5,7 @@ import com.github.bkhablenko.bizzabo.service.WatchedEpisodeService
 import com.github.bkhablenko.bizzabo.service.model.CastMember
 import com.github.bkhablenko.bizzabo.service.model.Show
 import com.github.bkhablenko.bizzabo.service.model.ShowEpisode
+import com.github.bkhablenko.bizzabo.service.model.WatchNextItem
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
@@ -194,7 +195,8 @@ class ScheduleControllerTest {
                 number = 1,
                 airDate = LocalDate.of(2011, Month.APRIL, 17),
             )
-            whenever(watchedEpisodeService.associateWithFirstUnwatchedEpisode(TEST_USERNAME, listOf(gameOfThrones))) doReturn mapOf(gameOfThrones to winterIsComing)
+
+            whenever(watchedEpisodeService.getWatchNextList(TEST_USERNAME, listOf(gameOfThrones))) doReturn listOf(WatchNextItem(gameOfThrones, winterIsComing))
 
             getWatchNextList().andExpect {
                 status { isOk() }
