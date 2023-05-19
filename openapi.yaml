@@ -12,7 +12,7 @@ info:
   description: |
     # Authentication
 
-    Users may authenticate with any username as long as they provide an empty password.
+    Users may authenticate with _any_ username as long as they provide an empty password.
 
     **NOTE:** For demonstration purposes only.
 
