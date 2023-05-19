@@ -1,9 +1,9 @@
-package com.github.bkhablenko.bizzabo.service.integration
+package com.github.bkhablenko.bizzabo.service
 
 import com.github.bkhablenko.bizzabo.domain.model.ScheduleEntry
 import com.github.bkhablenko.bizzabo.domain.model.ScheduleEntryId
 import com.github.bkhablenko.bizzabo.domain.repository.ScheduleEntryRepository
-import com.github.bkhablenko.bizzabo.service.TvmazeScheduleService
+import com.github.bkhablenko.bizzabo.service.integration.TvmazeIntegration
 import com.github.bkhablenko.bizzabo.service.model.Show
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains

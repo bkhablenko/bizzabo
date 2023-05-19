@@ -2,7 +2,6 @@ package com.github.bkhablenko.bizzabo.feign
 
 import com.github.bkhablenko.bizzabo.feign.model.TvmazeCastMember
 import com.github.bkhablenko.bizzabo.feign.model.TvmazeImage
-import com.github.bkhablenko.bizzabo.feign.model.TvmazeShow
 import com.github.bkhablenko.bizzabo.feign.model.TvmazeShowEpisode
 import feign.FeignException
 import org.hamcrest.MatcherAssert.assertThat
@@ -33,36 +32,19 @@ class TvmazeClientTest : AbstractFeignClientTest() {
     inner class GetShowByIdTest {
 
         @Test
-        fun `should return expected TV shows`() {
-            val expectedShow = TvmazeShow(
-                id = GAME_OF_THRONES_SHOW_ID,
-                name = "Game of Thrones",
-                image = TvmazeImage(
-                    original = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"),
-                ),
-            )
-            assertThat(tvmazeClient.getShowById(GAME_OF_THRONES_SHOW_ID), equalTo(expectedShow))
-        }
+        fun `should return expected TV show`() {
+            val result = tvmazeClient.getShowById(GAME_OF_THRONES_SHOW_ID)
 
-        @Test
-        fun `should throw exception if not found`() {
-            val nonExistentShowId = 0
-            assertThrows<FeignException.NotFound> {
-                tvmazeClient.getShowById(nonExistentShowId)
+            with(result) {
+                assertThat(id, equalTo(GAME_OF_THRONES_SHOW_ID))
+                assertThat(name, equalTo("Game of Thrones"))
+
+                val expectedImage =
+                    TvmazeImage(original = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"))
+                assertThat(image, equalTo(expectedImage))
             }
-        }
-    }
 
-    @DisplayName("getCastByShowId")
-    @Nested
-    inner class GetCastByShowIdTest {
-
-        @Test
-        fun `should return expected cast`() {
-            val result = tvmazeClient.getCastByShowId(GAME_OF_THRONES_SHOW_ID)
-            assertThat(result, hasSize(42))
-
-            val expectedCastMember = TvmazeCastMember(
+            val kitHarington = TvmazeCastMember(
                 person = TvmazeCastMember.Person(
                     id = 14075,
                     name = "Kit Harington",
@@ -71,14 +53,18 @@ class TvmazeClientTest : AbstractFeignClientTest() {
                     ),
                 ),
             )
-            assertThat(result, hasItem(expectedCastMember))
+
+            with(result.embedded) {
+                assertThat(cast, hasSize(42))
+                assertThat(cast, hasItem(kitHarington))
+            }
         }
 
         @Test
         fun `should throw exception if not found`() {
             val nonExistentShowId = 0
             assertThrows<FeignException.NotFound> {
-                tvmazeClient.getCastByShowId(nonExistentShowId)
+                tvmazeClient.getShowById(nonExistentShowId)
             }
         }
     }

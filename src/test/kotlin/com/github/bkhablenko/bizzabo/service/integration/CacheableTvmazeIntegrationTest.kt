@@ -61,14 +61,16 @@ class CacheableTvmazeIntegrationTest {
             image = TvmazeImage(
                 original = URL("https://static.tvmaze.com/uploads/images/original_untouched/190/476117.jpg"),
             ),
-        )
-        whenever(tvmazeClient.getCastByShowId(GAME_OF_THRONES_SHOW_ID)) doReturn listOf(
-            TvmazeCastMember(
-                person = TvmazeCastMember.Person(
-                    id = 14075,
-                    name = "Kit Harington",
-                    image = TvmazeImage(
-                        original = URL("https://static.tvmaze.com/uploads/images/original_untouched/1/3229.jpg"),
+            embedded = TvmazeShow.Embedded(
+                cast = listOf(
+                    TvmazeCastMember(
+                        person = TvmazeCastMember.Person(
+                            id = 14075,
+                            name = "Kit Harington",
+                            image = TvmazeImage(
+                                original = URL("https://static.tvmaze.com/uploads/images/original_untouched/1/3229.jpg"),
+                            ),
+                        ),
                     ),
                 ),
             ),
@@ -79,8 +81,7 @@ class CacheableTvmazeIntegrationTest {
                 name = "Winter is Coming",
                 season = 1,
                 number = 1,
-                airdate = LocalDate.of(2011, Month.APRIL, 17)
-
+                airdate = LocalDate.of(2011, Month.APRIL, 17),
             )
         )
     }

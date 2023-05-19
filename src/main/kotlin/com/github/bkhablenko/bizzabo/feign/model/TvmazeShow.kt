@@ -12,4 +12,14 @@ data class TvmazeShow(
 
     @JsonProperty("image")
     val image: TvmazeImage,
-)
+
+    @JsonProperty("_embedded")
+    val embedded: Embedded,
+) {
+
+    data class Embedded(
+
+        @JsonProperty("cast")
+        val cast: List<TvmazeCastMember>,
+    )
+}

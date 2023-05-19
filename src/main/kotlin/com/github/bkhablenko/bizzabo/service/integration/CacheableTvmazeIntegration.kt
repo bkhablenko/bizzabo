@@ -2,6 +2,7 @@ package com.github.bkhablenko.bizzabo.service.integration
 
 import com.github.bkhablenko.bizzabo.exception.ShowNotFoundException
 import com.github.bkhablenko.bizzabo.feign.TvmazeClient
+import com.github.bkhablenko.bizzabo.feign.model.TvmazeCastMember
 import com.github.bkhablenko.bizzabo.service.model.CastMember
 import com.github.bkhablenko.bizzabo.service.model.Show
 import com.github.bkhablenko.bizzabo.service.model.ShowEpisode
@@ -24,7 +25,7 @@ class CacheableTvmazeIntegration(private val tvmazeClient: TvmazeClient) : Tvmaz
                 id = id,
                 title = name,
                 imageUrl = image.original,
-                cast = getCastByShowId(showId),
+                cast = embedded.cast.map { toCastMember(it.person) },
             )
         }
     }
@@ -49,20 +50,12 @@ class CacheableTvmazeIntegration(private val tvmazeClient: TvmazeClient) : Tvmaz
         }
     }
 
-    private fun getCastByShowId(showId: Int): List<CastMember> {
-        val tvmazeCastMembers = try {
-            tvmazeClient.getCastByShowId(showId)
-        } catch (_: FeignException.NotFound) {
-            throw ShowNotFoundException(showId)
+    private fun toCastMember(source: TvmazeCastMember.Person) =
+        with(source) {
+            CastMember(
+                id = id,
+                fullName = name,
+                imageUrl = image.original,
+            )
         }
-        return tvmazeCastMembers.map {
-            with(it.person) {
-                CastMember(
-                    id = id,
-                    fullName = name,
-                    imageUrl = image.original,
-                )
-            }
-        }
-    }
 }
